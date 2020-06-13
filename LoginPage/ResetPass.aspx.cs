@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -13,7 +15,7 @@ namespace LoginPage
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            labelErrorMessage.Visible = false;
         }
 
         protected void TextBox1_TextChanged(object sender, EventArgs e)
@@ -25,25 +27,43 @@ namespace LoginPage
         {
             Random random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            char[] passw = (Enumerable.Repeat(chars, 10)
+            char[] pass = (Enumerable.Repeat(chars, 10)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
+            string passw = new string(pass);
+            MailMessage mailMessage = new MailMessage();
+            MailAddress fromAddress = new MailAddress("recovery@mail.com");
+            mailMessage.From = fromAddress;
+            mailMessage.To.Add(txtEmail.Text);
+            mailMessage.Body = "new password: " + passw;
+            mailMessage.IsBodyHtml = true;
+            mailMessage.Subject = " Recovery password";
+            SmtpClient smtpClient = new SmtpClient();
+            smtpClient.Host = "localhost";
+            smtpClient.Send(mailMessage);
 
-            var msg = "New password: " + passw;
-            var sClient = new SmtpClient("domain-com.mail.protection.outlook.com");
-            var message = new MailMessage();
+            using (SqlConnection sqlCon = new SqlConnection(@"Data Source=(LocalDB)\LocalDBPai;initial Catalog=PAI;Integrated Security=True;"))
+            {
+                sqlCon.Open();
+                string query = "SELECT COUNT(1) FROM UserTable WHERE UserName=@UserName";
+                SqlCommand sqlCmd = new SqlCommand(query, sqlCon);
+                sqlCmd.Parameters.AddWithValue("@UserName", txtEmail.Text.Trim());
+                int count = Convert.ToInt32(sqlCmd.ExecuteScalar());
+                if (count == 1)
+                {
+                    query = "UPDATE UserTable SET Password = '"+ passw + "' WHERE UserName=@UserName;";
+                    sqlCmd = new SqlCommand(query, sqlCon);
+                    sqlCmd.Parameters.AddWithValue("@UserName", txtEmail.Text.Trim());
+                    sqlCmd.ExecuteScalar();
 
-            sClient.Port = 25;
-            sClient.EnableSsl = false;
-            sClient.Credentials = new NetworkCredential("user", "password");
-            sClient.UseDefaultCredentials = false;
+                    Response.Redirect("Login.aspx");
 
-            message.Body = msg;
-            message.From = new MailAddress("test@test.com");
-            
-            message.Subject = "Test";
-            message.CC.Add(new MailAddress("dude@good.com"));
+                }
+                else
+                {
+                    labelErrorMessage.Visible = true;
 
-            sClient.Send(message);
+                }
+            }
         }
     }
 }

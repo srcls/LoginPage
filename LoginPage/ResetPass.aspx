@@ -13,6 +13,7 @@
             <asp:TextBox ID="txtEmail" runat="server" OnTextChanged="TextBox1_TextChanged"></asp:TextBox>
             <asp:Button ID="btnReset" runat="server" OnClick="btnReset_Click" Text="Reset" />
         </div>
+        <asp:Label ID="labelErrorMessage" runat="server" Text="Incorrect email"></asp:Label>
     </form>
 </body>
 </html>

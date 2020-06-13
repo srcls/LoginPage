@@ -9,7 +9,6 @@
 <body>
     <form id="form1" runat="server">
         <div>
-            <asp:HiddenField ID="hfUserID" runat="server"/>
             <table style="margin: auto; border: 5px solid white">
                 <tr>
                     
