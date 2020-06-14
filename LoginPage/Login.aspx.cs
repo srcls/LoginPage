@@ -47,5 +47,10 @@ namespace LoginPage
         {
             Response.Redirect("ResetPass.aspx");
         }
+
+        protected void btnProductPage_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Products.aspx");
+        }
     }
 }

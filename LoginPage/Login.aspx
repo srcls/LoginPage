@@ -44,6 +44,9 @@
                 </tr>
             </table>
         </div>
+        <p>
+            <asp:Button ID="btnProductPage" runat="server" OnClick="btnProductPage_Click" Text="Produkty" />
+        </p>
     </form>
 </body>
 </html>
