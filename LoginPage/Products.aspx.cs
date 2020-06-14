@@ -20,9 +20,6 @@ namespace LoginPage
             using (SqlConnection sqlCon =
                 new SqlConnection(@"Data Source=(LocalDB)\LocalDBPai;initial Catalog=PAI;Integrated Security=True;"))
             {
-
-
-
                 sqlCon.Open();
                 string query = "SELECT ProductName FROM Products";
                 using (SqlCommand command = new SqlCommand(query, sqlCon))
@@ -52,12 +49,14 @@ namespace LoginPage
                     }
                 }
 
+                i = 0;
                 string tableHtml = "<table border=1>\n<tr><th>Produkt</th><th>Cena</th></tr>";
                 foreach (var element in columnData)
                 {
                     tableHtml += "<tr><td>" + element[0] + "</td>";
-                    tableHtml += "<td>" + element[1] + "</td></tr>";
-
+                    tableHtml += "<td>" + element[1] + "</td>";
+                    tableHtml += "<td><button type=\"button\" onclick=\"location.href = \'Cart.aspx?ProductName="+element[0]+"&Price="+element[1]+"\'; \">Add to cart</button></td></tr>";
+                    i++;
                 }
 
                 tableHtml += "</table>";
@@ -86,7 +85,8 @@ namespace LoginPage
             foreach (var element in columnData)
             {
                 tableHtml += "<tr><td>" + element[0] + "</td>";
-                tableHtml += "<td>" + element[1] + "</td></tr>";
+                tableHtml += "<td>" + element[1] + "</td>";
+                tableHtml += "<td><button type=\"button\">Add to cart</button></td></tr>";
 
             }
 
@@ -109,7 +109,8 @@ namespace LoginPage
                 if (matches.Count > 0)
                 {
                     tableHtml += "<tr><td>" + element[0] + "</td>";
-                    tableHtml += "<td>" + element[1] + "</td></tr>";
+                    tableHtml += "<td>" + element[1] + "</td>";
+                    tableHtml += "<td><button type=\"button\">Add to cart</button></td></tr>";
                 }
             }
 
